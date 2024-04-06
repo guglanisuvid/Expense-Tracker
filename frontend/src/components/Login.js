@@ -22,8 +22,11 @@ const Login = () => {
         });
 
         const data = await res.json();
+        console.log(data);
 
-        data.success ? navigate('/profile') : navigate('/login');
+        if (data.error === false) {
+            navigate('/profile');
+        }
     }
 
     return (
