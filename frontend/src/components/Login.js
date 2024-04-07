@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -18,16 +18,34 @@ const Login = () => {
             body: JSON.stringify({
                 username,
                 password
-            })
+            }),
+            credentials: 'include'
         });
 
-        const data = await res.json();
-        console.log(data);
-
-        if (data.error === false) {
-            navigate('/profile');
+        if (res.ok) {
+            const data = await res.json();
+            if (data.error === false) navigate('/profile');
         }
     }
+
+    useEffect(() => {
+        const isAuthenticated = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/is-authenticated',
+                    {
+                        credentials: 'include'
+                    });
+                if (res.ok) {
+                    const data = await res.json();
+                    data.user ? navigate('/profile') : navigate('/login');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        isAuthenticated();
+    }, [navigate]);
 
     return (
         <div className="relative h-dvh w-dvw bg-slate-500 text-slate-800 tracking-wider">

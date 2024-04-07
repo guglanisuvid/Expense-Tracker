@@ -1,28 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AddExpense = () => {
     const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('');
 
+    const navigate = useNavigate();
+
     const addExpense = async (e) => {
         e.preventDefault();
 
-        //     const res = await fetch('http://localhost:5000/api/add-expense', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({
-        //             title,
-        //             amount,
-        //             category
-        //         })
-        //     });
+        try {
+            const res = await fetch('http://localhost:5000/api/add-expense', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title,
+                    amount,
+                    category
+                }),
+                credentials: 'include'
+            });
 
-        //     // const data = await res.json();
-
-        //     // console.log(data);
+            if (res.ok) {
+                const data = await res.json();
+                console.log(data);
+                data.error ? alert(data.message) : navigate('/profile');
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     return (
@@ -45,7 +55,7 @@ const AddExpense = () => {
                 <select
                     value={category}
                     onChange={e => setCategory(e.target.value)}>
-                    <option value="category">Select Category</option>
+                    <option value="">Select Category</option>
                     <option value="academic">Academic</option>
                     <option value="housing">Housing</option>
                     <option value="foodGroceries">Food and Groceries</option>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -6,34 +6,50 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // To navigate to different routes
 
+    // Register new user
     const registerUser = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission
 
-        try {
-            const res = await fetch('http://localhost:5000/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password
-                })
-            });
+        // Fetch API to register new user
+        const res = await fetch('http://localhost:5000/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password
+            }),
+            credentials: 'include'
+        });
 
+        if (res.ok) {
             const data = await res.json();
-            console.log(data);
-
-            if (data.error === false) {
-                navigate('/profile');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+            if (data.error === false) navigate('/profile');
         }
-    };
+    }
+
+    useEffect(() => {
+        const isAuthenticated = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/is-authenticated',
+                    {
+                        credentials: 'include'
+                    });
+                if (res.ok) {
+                    const data = await res.json();
+                    data.user ? navigate('/profile') : navigate('/');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        isAuthenticated();
+    }, [navigate]);
 
     return (
         <div className="relative h-dvh w-dvw bg-slate-500 text-slate-800 tracking-wider">
@@ -75,5 +91,4 @@ const Register = () => {
         </div>
     )
 }
-
 export default Register;
