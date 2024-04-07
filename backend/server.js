@@ -13,7 +13,15 @@ require("./dbconnect");
 
 const app = express();
 
-app.use(cors());
+app.set("trust proxy", 1);
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,6 +33,9 @@ app.use(
     secret: "ExpenseTracker",
     cookie: {
       secure: false,
+      sameSite: "strict",
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000, // in minutes 60 mins
     },
   })
 );
