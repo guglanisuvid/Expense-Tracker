@@ -18,9 +18,10 @@ app.set("trust proxy", 1); // Trusting first proxy
 
 // Setting up and configuring cors
 app.use(
+    // Using cors with configuration
     cors({
-        origin: "http://localhost:3000",
-        credentials: true,
+        origin: "http://localhost:3000", // Allowing requests from localhost:3000
+        credentials: true, // Allowing credentials
     })
 );
 
@@ -28,14 +29,15 @@ app.use(express.urlencoded({ extended: true })); // Using urlencoded parser for 
 
 // Setting up and configuring sessions
 app.use(session({
-    resave: false,
-    saveUninitialized: false,
-    secret: 'ExpenseTracker',
+    resave: false, // Resave session
+    saveUninitialized: false, // Save uninitialized session
+    secret: 'ExpenseTracker', // Secret key for session
+    // Setting up session cookie
     cookie: {
-        secure: false,
-        sameSite: 'strict',
-        httpOnly: true,
-        maxAge: 60 * 60 * 1000
+        secure: false, // Secure cookie
+        sameSite: 'strict', // Same site cookie
+        httpOnly: true, // Http only cookie
+        maxAge: 60 * 60 * 1000 // Max age of cookie in milliseconds
     }
 }));
 
@@ -44,44 +46,47 @@ app.use(passport.session()); // Using passport session
 
 // Generating Password Hash
 const generatePasswordHash = (text) => {
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(text, salt);
-    return hash;
+    const salt = bcrypt.genSaltSync(10); // Generating salt for password hash with 10 rounds of hashing
+    const hash = bcrypt.hashSync(text, salt); // Generating password hash with salt and user password
+    return hash; // Returning password hash to store in database
 };
 
 // Matching Password Hash
 const matchHashedPassword = (text, hashedText) => {
-    return bcrypt.compareSync(text, hashedText);
+    return bcrypt.compareSync(text, hashedText); // Comparing password hash with user password
 };
 
 // User Registration Validation Schema using joi
 const userRegisterationValidationSchema = joi.object({
-    email: joi.string().email().required().min(5),
-    password: joi.string().required().min(3).max(100),
-    username: joi.string().required(),
+    email: joi.string().email().required().min(5), // Email validation with minimum 5 characters
+    password: joi.string().required().min(3).max(100), // Password validation with minimum 3 and maximum 100 characters
+    username: joi.string().required(), // Username validation with minimum 1 character
 });
 
 // Setting up passport local strategy
 passport.use(new localStrategy(
+    // Setting up username and password fields
     {
         usernameField: 'username',
         passwordField: 'password',
     },
+    // Authenticating user with username and password
     async (username, password, done) => {
         try {
-            const user = await User.findOne({ username: username });
+            const user = await User.findOne({ username: username }); // Finding user by username
 
-            if (!user) return done(null, false, { message: 'Incorrect username.' });
+            if (!user) return done(null, false, { message: 'Incorrect username.' }); // If user not found
 
+            // If user password is undefined
             if (!user.password) {
                 return done(null, false, { message: 'User password is undefined.' });
             }
 
-            const isValid = matchHashedPassword(password, user.password);
+            const isValid = matchHashedPassword(password, user.password); // Matching password hash with user password
 
-            if (isValid) return done(null, user);
-            else return done(null, false, { message: 'Incorrect password.' });
-        } catch (err) {
+            if (isValid) return done(null, user); // If password is correct
+            else return done(null, false, { message: 'Incorrect password.' }); // If password is incorrect
+        } catch (err) { // If error occurs
             console.error(err);
             return done(err);
         }
@@ -89,29 +94,31 @@ passport.use(new localStrategy(
 
 // Serializing user
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user.id); // Serializing user
 });
 
 // Deserializing user
 passport.deserializeUser(async (id, done) => {
     try {
-        const user = await User.findById(id);
-        done(null, user);
+        const user = await User.findById(id); // Finding user by id
+        done(null, user); // If user is found
     } catch (err) {
-        done(err, false);
+        done(err, false); // If user is not found
     }
 });
 
 // Register new user
 app.post('/api/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password } = req.body; // Getting username, email, and password from request body
 
+    // Validating user registration data
     const validationResults = userRegisterationValidationSchema.validate({
         email,
         password,
         username,
     });
 
+    // If validation error occurs
     if (validationResults.error) {
         return res.json({
             error: true,
@@ -119,11 +126,14 @@ app.post('/api/register', async (req, res) => {
         });
     }
 
+    // Checking if user already exists
     const existingUser = await User.findOne({
         $or: [{ username }, { email }]
     });
 
+    // If user does not exist
     if (!existingUser) {
+        // Creating new user
         const newUser = new User({
             email,
             password: generatePasswordHash(password),
@@ -131,25 +141,26 @@ app.post('/api/register', async (req, res) => {
         });
 
         try {
-            await newUser.save();
+            await newUser.save(); // Saving new user
         } catch (err) {
-            return res.json({ error: true, message: err });
+            return res.json({ error: true, message: err }); // If error occurs while saving user
         }
 
         req.logIn(newUser, (err) => {
             if (err) {
-                return res.json({ error: true, message: err });
+                return res.json({ error: true, message: err }); // If error occurs while logging in user
             } else {
-                return res.json({ error: false, message: "Sign up success" });
+                return res.json({ error: false, message: "Sign up success" }); // If user is signed up successfully
             }
         });
     } else {
-        return res.json({ error: true, message: "User already exists" });
+        return res.json({ error: true, message: "User already exists" }); // If user already exists
     }
 });
 
 // Login user
 app.post("/api/login", passport.authenticate("local"), (req, res) => {
+    // If user is authenticated
     res.json({
         error: false,
         message: "Login success",
@@ -159,25 +170,26 @@ app.post("/api/login", passport.authenticate("local"), (req, res) => {
 // Sign out user
 app.get('/api/logout', (req, res) => {
     req.logOut(err => {
-        if (err) return res.json({ error: true, message: err || "Something went wrong" });
-        else return res.json({ error: false, message: "User logged out successfully" });
+        if (err) return res.json({ error: true, message: err || "Something went wrong" }); // If error occurs while logging out user
+        else return res.json({ error: false, message: "User logged out successfully" }); // If user is logged out successfully
     });
 });
 
 // Check current user authentication status
 app.get('/api/is-authenticated', async (req, res) => {
     if (req.isAuthenticated()) {
-        const user = await User.findOne({ username: req.user.username }).populate('expenses');
-        return res.json({ error: false, message: "User is Signed In", user: user });
-    } else return res.json({ error: true, message: "Unauthorized access", });
+        const user = await User.findOne({ username: req.user.username }).populate('expenses'); // Finding user by username and populating expenses
+        return res.json({ error: false, message: "User is Signed In", user: user }); // If user is authenticated
+    } else return res.json({ error: true, message: "Unauthorized access", }); // If user is not authenticated
 });
 
 // Add new expense
 app.post('/api/add-expense', async (req, res) => {
-    const { title, amount, category } = req.body;
+    const { title, amount, category } = req.body; // Getting title, amount, and category from request body
 
-    const user = await User.findOne({ username: req.user.username });
+    const user = await User.findOne({ username: req.user.username }); // Finding user by username
 
+    // Creating new expense
     const newExpense = new Expense({
         title,
         amount,
@@ -186,16 +198,48 @@ app.post('/api/add-expense', async (req, res) => {
     });
 
     try {
-        await newExpense.save();
-        user.expenses.push(newExpense._id);
+        await newExpense.save(); // Saving new expense
+        user.expenses.push(newExpense._id); // Pushing new expense to user expenses array
         try {
-            await user.save();
-            res.json({ error: false, message: "Expense added successfully" });
+            await user.save(); // Saving user
+            res.json({ error: false, message: "Expense added successfully" }); // If expense is added successfully
         } catch (err) {
-            res.json({ error: true, message: err });
+            res.json({ error: true, message: err }); // If error occurs while saving user
         }
     } catch (err) {
-        res.json({ error: true, message: err });
+        res.json({ error: true, message: err }); // If error occurs while saving expense
+    }
+});
+
+// Edit expense
+app.put('/api/edit-expense/:id', async (req, res) => {
+    const { title, amount, category } = req.body; // Getting title, amount, and category from request body
+    const user = await User.findOne({ username: req.user.username }); // Finding user by username
+
+    try {
+        const updatedExpense = await Expense.findByIdAndUpdate(req.params.id, { title, amount, category }, { new: true }); // Updating expense by id
+        res.json({ error: false, message: "Expense updated successfully", expense: updatedExpense }); // If expense is updated successfully
+    } catch (err) {
+        res.json({ error: true, message: err }); // If error occurs while updating expense
+    }
+});
+
+// Delete expense
+app.delete('/api/delete-expense/:id', async (req, res) => {
+    const user = await User.findOne({ username: req.user.username }); // Finding user by username
+
+    try {
+        await Expense.findByIdAndDelete(req.params.id); // Deleting expense by id
+
+        // Pulling expense from user expenses array
+        await User.updateOne(
+            { username: req.user.username },
+            { $pull: { expenses: req.params.id } }
+        );
+
+        res.json({ error: false, message: "Expense deleted successfully" }); // If expense is deleted successfully
+    } catch (err) {
+        res.json({ error: true, message: err }); // If error occurs while deleting expense
     }
 });
 
