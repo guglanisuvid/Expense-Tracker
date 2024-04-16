@@ -1,8 +1,8 @@
 const mongoose = require('mongoose'); // Importing mongoose
 
-// Expense Schema for Expense model
-const expenseSchema = new mongoose.Schema({
-    // Defining expense schema with title, amount, category, date and userId
+// Income Schema for Income model
+const incomeSchema = new mongoose.Schema({
+    // Defining income schema with title, amount, category, date and userId
     title: {
         type: String,
         required: true
@@ -14,7 +14,7 @@ const expenseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['Academic', 'Housing', 'Food/Groceries', 'Transportation', 'Healthcare', 'Personal', 'Entertainment', 'Clothing', 'Miscellaneous']
+        enum: ['Salary', 'Business', 'Investments', 'Rentals', 'Benefits/Insurance', 'Miscellaneous']
     },
     date: {
         type: Date,
@@ -27,4 +27,4 @@ const expenseSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Expense', expenseSchema); // Exporting Expense model
+module.exports = mongoose.model('Income', incomeSchema); // Exporting Income model

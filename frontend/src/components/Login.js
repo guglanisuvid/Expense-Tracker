@@ -25,7 +25,7 @@ const Login = () => {
 
         if (res.ok) {
             const data = await res.json();
-            data.error ? alert(data.message) : navigate('/profile'); // If error, alert the message, else navigate to profile
+            data.error ? alert(data.message) : navigate('/dashboard'); // If error, alert the message, else navigate to dashboard
         }
     }
 
@@ -39,7 +39,7 @@ const Login = () => {
                     });
                 if (res.ok) {
                     const data = await res.json();
-                    data.user ? navigate('/profile') : navigate('/login');
+                    data.user ? navigate('/dashboard') : navigate('/login');
                 }
             } catch (err) {
                 console.error(err);

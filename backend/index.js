@@ -5,6 +5,7 @@ const passport = require('passport'); // Importing passport
 const localStrategy = require('passport-local'); // Importing passport local strategy
 const User = require('./user'); // Importing User model
 const Expense = require('./expense'); // Importing Expense model
+const Income = require('./income'); // Importing Income model
 const joi = require('joi'); // Importing joi for validation
 const bcrypt = require('bcryptjs'); // Importing bcrypt for password hashing
 
@@ -178,7 +179,11 @@ app.get('/api/logout', (req, res) => {
 // Check current user authentication status
 app.get('/api/is-authenticated', async (req, res) => {
     if (req.isAuthenticated()) {
-        const user = await User.findOne({ username: req.user.username }).populate('expenses'); // Finding user by username and populating expenses
+        // Finding user by username and populating expenses and income
+        const user = await User.findOne({ username: req.user.username })
+            .populate({ path: 'expenses', options: { sort: { date: -1 } } })
+            .populate({ path: 'income', options: { sort: { date: -1 } } });
+
         return res.json({ error: false, message: "User is Signed In", user: user }); // If user is authenticated
     } else return res.json({ error: true, message: "Unauthorized access", }); // If user is not authenticated
 });
@@ -202,7 +207,7 @@ app.post('/api/add-expense', async (req, res) => {
         user.expenses.push(newExpense._id); // Pushing new expense to user expenses array
         try {
             await user.save(); // Saving user
-            res.json({ error: false, message: "Expense added successfully" }); // If expense is added successfully
+            res.json({ error: false, message: "Expense added successfully", expense: newExpense }); // If expense is added successfully
         } catch (err) {
             res.json({ error: true, message: err }); // If error occurs while saving user
         }
@@ -214,7 +219,6 @@ app.post('/api/add-expense', async (req, res) => {
 // Edit expense
 app.put('/api/edit-expense/:id', async (req, res) => {
     const { title, amount, category } = req.body; // Getting title, amount, and category from request body
-    const user = await User.findOne({ username: req.user.username }); // Finding user by username
 
     try {
         const updatedExpense = await Expense.findByIdAndUpdate(req.params.id, { title, amount, category }, { new: true }); // Updating expense by id
@@ -226,7 +230,6 @@ app.put('/api/edit-expense/:id', async (req, res) => {
 
 // Delete expense
 app.delete('/api/delete-expense/:id', async (req, res) => {
-    const user = await User.findOne({ username: req.user.username }); // Finding user by username
 
     try {
         await Expense.findByIdAndDelete(req.params.id); // Deleting expense by id
@@ -240,6 +243,62 @@ app.delete('/api/delete-expense/:id', async (req, res) => {
         res.json({ error: false, message: "Expense deleted successfully" }); // If expense is deleted successfully
     } catch (err) {
         res.json({ error: true, message: err }); // If error occurs while deleting expense
+    }
+});
+
+// Add new income
+app.post('/api/add-income', async (req, res) => {
+    const { title, amount, category } = req.body; // Getting title, amount, and category from request body
+
+    const user = await User.findOne({ username: req.user.username }); // Finding user by username
+
+    // Creating new income
+    const newIncome = new Income({
+        title,
+        amount,
+        category,
+        userId: user._id,
+    });
+
+    try {
+        await newIncome.save(); // Saving new income
+        user.income.push(newIncome._id); // Pushing new income to user income array
+        try {
+            await user.save(); // Saving user
+            res.json({ error: false, message: "Expense added successfully", income: newIncome }); // If income is added successfully
+        } catch (err) {
+            res.json({ error: true, message: err }); // If error occurs while saving user
+        }
+    } catch (err) {
+        res.json({ error: true, message: err }); // If error occurs while saving income
+    }
+});
+
+// Edit income
+app.put('/api/edit-income/:id', async (req, res) => {
+    const { title, amount, category } = req.body; // Getting title, amount, and category from request body
+
+    try {
+        const updatedIncome = await Income.findByIdAndUpdate(req.params.id, { title, amount, category }, { new: true }); // Updating income by id
+        res.json({ error: false, message: "Income updated successfully", income: updatedIncome }); // If income is updated successfully
+    } catch (err) {
+        res.json({ error: true, message: err }); // If error occurs while updating income
+    }
+});
+
+// Delete income
+app.delete('/api/delete-income/:id', async (req, res) => {
+    try {
+        await Income.findByIdAndDelete(req.params.id); // Deleting income by id
+
+        // Pulling income from user income array
+        await User.updateOne(
+            { username: req.user.username },
+            { $pull: { income: req.params.id } }
+        );
+        res.json({ error: false, message: "Income deleted successfully" }); // If income is deleted successfully
+    } catch (err) {
+        res.json({ error: true, message: err }); // If error occurs while deleting income
     }
 });
 

@@ -28,7 +28,7 @@ const Register = () => {
 
         if (res.ok) {
             const data = await res.json();
-            data.error ? alert(data.message) : navigate('/profile');
+            data.error ? alert(data.message) : navigate('/dashboard');
         }
     }
 
@@ -42,7 +42,7 @@ const Register = () => {
                     });
                 if (res.ok) {
                     const data = await res.json();
-                    data.user ? navigate('/profile') : navigate('/'); // If user is authenticated, navigate to profile page, else navigate to home page
+                    data.user ? navigate('/dashboard') : navigate('/'); // If user is authenticated, navigate to dashboard page, else navigate to home page
                 }
             } catch (err) {
                 console.error(err);

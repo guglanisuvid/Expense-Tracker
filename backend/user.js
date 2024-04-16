@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     expenses: [{
         type: mongoose.Schema.Types.ObjectId, // Reference to Expense model with expenses field
         ref: 'Expense'
+    }],
+    income: [{
+        type: mongoose.Schema.Types.ObjectId, // Reference to Income model with income field
+        ref: 'Income'
     }]
 });
 
