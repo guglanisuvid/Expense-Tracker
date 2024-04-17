@@ -50,45 +50,38 @@ const Login = () => {
     }, [navigate]);
 
     return (
-        <div className="relative h-dvh w-dvw bg-slate-500 text-slate-800 tracking-wider">
-            <div className="w-1/5 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                <p className="text-3xl font-semibold text-center my-3">Sign In</p> {/* Sign In heading */}
-                {/* Form to login user */}
-                <form onSubmit={loginUser} method="POST" className="flex flex-col gap-3">
-                    {/* Input field for username */}
-                    <input
-                        type="username"
-                        name="username"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="Username"
-                        className="px-6 py-3 rounded-xl bg-slate-50 text-slate-800 font-medium outline-none border-0"
-                    />
-                    {/* Input field for password */}
-                    <input
-                        type="password"
-                        name="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        placeholder="Password"
-                        className="px-6 py-3 rounded-xl bg-slate-50 text-slate-800 font-medium outline-none border-0"
-                    />
-                    {/* Submit button */}
-                    <input
-                        type="submit"
-                        value="Sign In"
-                        className="px-6 py-3 rounded-xl bg-slate-800 text text-slate-200 font-medium tracking-wider"
-                    />
-                </form>
-                {/* Link to sign up */}
-                <p className="my-3">
-                    New User? <Link to="/">
-                        <span className="font-medium">
-                            Sign Up
-                        </span>
-                    </Link>
-                </p>
-            </div>
+        <div className="absolute w-1/5 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            <p className="text-3xl font-semibold text-center my-4">SIGN IN</p> {/* Sign In heading */}
+
+            {/* Form to login user */}
+            <form onSubmit={loginUser} method="POST" className="flex flex-col gap-4">
+                {/* Input field for username */}
+                <input
+                    className="p-4 rounded-full border-none outline-none bg-[#1C1C1C] text-[#F6F6F6] focus:shadow-lg hover:shadow-lg focus:bg-[#2C2C2C] hover:bg-[#2C2C2C] transition-all duration-300 ease-in-out"
+                    type="username"
+                    name="username"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    placeholder="Username"
+                />
+                {/* Input field for password */}
+                <input
+                    className="p-4 rounded-full border-none outline-none bg-[#1C1C1C] text-[#F6F6F6] focus:shadow-lg hover:shadow-lg focus:bg-[#2C2C2C] hover:bg-[#2C2C2C] transition-all duration-300 ease-in-out"
+                    type="password"
+                    name="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Password"
+                />
+                {/* Submit button */}
+                <input
+                    className='w-full bg-[#F6F6F6] text-[#0F0F0F] font-medium p-4 rounded-full cursor-pointer border-none outline-none hover:text-[#F6F6F6] hover:bg-[#E35933] transition-all duration-300 ease-in-out'
+                    type="submit"
+                    value="Sign In"
+                />
+            </form>
+
+            <p className="my-4">New User?{' '}<Link className="font-medium hover:text-[#5C8D7B] transition-all duration-300 ease-in-out" to="/">Sign Up</Link></p> {/* Link to sign up component */}
         </div>
     )
 }

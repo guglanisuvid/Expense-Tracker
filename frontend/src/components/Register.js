@@ -53,53 +53,48 @@ const Register = () => {
     }, [navigate]);
 
     return (
-        <div className="relative h-dvh w-dvw bg-slate-500 text-slate-800 tracking-wider">
-            <div className="w-1/5 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                <p className="text-3xl font-semibold text-center my-3">Sign Up</p> {/* Sign Up heading */}
-                {/* Form to register new user */}
-                <form onSubmit={registerUser} method="POST" className="flex flex-col gap-3">
-                    {/* Input field for username */}
-                    <input
-                        type="text"
-                        name="username"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="Username"
-                        className="px-6 py-3 rounded-xl bg-slate-50 text-slate-800 font-medium outline-none border-0"
-                    />
-                    {/* Input field for email */}
-                    <input
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        placeholder="Email"
-                        className="px-6 py-3 rounded-xl bg-slate-50 text-slate-800 font-medium outline-none border-0"
-                    />
-                    {/* Input field for password */}
-                    <input
-                        type="password"
-                        name="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        placeholder="Password"
-                        className="px-6 py-3 rounded-xl bg-slate-50 text-slate-800 font-medium outline-none border-0"
-                    />
-                    {/* Submit button */}
-                    <input
-                        type="submit"
-                        value="Sign Up"
-                        className="px-6 py-3 rounded-xl bg-slate-800 text text-slate-200 font-medium tracking-wider"
-                    />
-                </form>
-                {/* Link to Login component */}
-                <p className="my-3">
-                    Already a user? <Link to="/login">
-                        <span className="font-medium">
-                            Sign In</span>
-                    </Link>
-                </p>
-            </div>
+        <div className="w-1/5 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            <p className="text-3xl font-semibold text-center my-4">SIGN UP</p> {/* Sign Up heading */}
+
+            {/* Form to register new user */}
+            <form onSubmit={registerUser} method="POST" className="flex flex-col gap-4">
+                {/* Input field for username */}
+                <input
+                    className="p-4 rounded-full border-none outline-none bg-[#1C1C1C] text-[#F6F6F6] focus:shadow-lg hover:shadow-lg focus:bg-[#2C2C2C] hover:bg-[#2C2C2C] transition-all duration-300 ease-in-out"
+                    type="text"
+                    name="username"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    placeholder="Username"
+                />
+
+                {/* Input field for email */}
+                <input
+                    className="p-4 rounded-full border-none outline-none bg-[#1C1C1C] text-[#F6F6F6] focus:shadow-lg hover:shadow-lg focus:bg-[#2C2C2C] hover:bg-[#2C2C2C] transition-all duration-300 ease-in-out"
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="Email"
+                />
+                {/* Input field for password */}
+                <input
+                    className="p-4 rounded-full border-none outline-none bg-[#1C1C1C] text-[#F6F6F6] focus:shadow-lg hover:shadow-lg focus:bg-[#2C2C2C] hover:bg-[#2C2C2C] transition-all duration-300 ease-in-out"
+                    type="password"
+                    name="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Password"
+                />
+                {/* Submit button */}
+                <input
+                    className='w-full bg-[#F6F6F6] text-[#0F0F0F] font-medium p-4 rounded-full cursor-pointer border-none outline-none hover:text-[#F6F6F6] hover:bg-[#5C8D7B] transition-all duration-300 ease-in-out'
+                    type="submit"
+                    value="Sign Up"
+                />
+            </form>
+
+            <p className="my-4">Already a user?{' '}<Link className="font-medium hover:text-[#E35933] transition-all duration-300 ease-in-out" to="/login">Sign In</Link></p> {/* Link to Login component */}
         </div>
     )
 }
