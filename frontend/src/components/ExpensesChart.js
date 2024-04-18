@@ -35,7 +35,7 @@ const ExpensesChart = ({ expensesData }) => {
     };
 
     return (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer className='flex justify-between items-center' width="100%">
             <BarChart data={data} margin={{ top: 16, right: 32 }}>
                 <XAxis dataKey="category" tick={{ fontSize: 9 }} />
                 <YAxis tick={{ fontSize: 9 }} />

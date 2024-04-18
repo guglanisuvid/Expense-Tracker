@@ -6,10 +6,9 @@ import NotFound from "./components/NotFound"; // Import the NotFound component
 import { BrowserRouter, Route, Routes } from "react-router-dom"; // Import the BrowserRouter, Route, and Routes components from the react-router-dom library
 
 function App() {
-
   return (
     <div
-      className="w-dvw h-dvh bg-[#0F0F0F] text-[#F6F6F6] tracking-wide p-6 overflow-hidden">
+      className="w-dvw max-w-[2000px] h-[200dvh] sm:h-[150dvh] md:h-dvh bg-[#0F0F0F] text-[#F6F6F6] tracking-wide p-6 mx-auto md:overflow-hidden scrollbar-none">
       {/* BrowserRouter component to wrap the routes */}
       <BrowserRouter>
         {/* Routes component to define the routes */}

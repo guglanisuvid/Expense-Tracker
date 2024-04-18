@@ -36,7 +36,7 @@ const IncomeChart = ({ incomeData }) => {
     };
 
     return (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer className="flex justify-between items-center" width="100%">
             <BarChart data={data} margin={{ top: 16, right: 32 }}>
                 <XAxis dataKey="category" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
@@ -47,4 +47,4 @@ const IncomeChart = ({ incomeData }) => {
     )
 }
 
-export default IncomeChart
+export default IncomeChart;

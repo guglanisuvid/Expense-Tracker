@@ -184,29 +184,29 @@ const Income = ({ income, setIncome, search }) => {
             <div
                 className="flex justify-between items-center">
                 <h1
-                    className="text-2xl font-semibold">
+                    className="text-xl font-semibold">
                     Income
                 </h1>
                 {/* Add income button */}
                 <button
-                    className="bg-[#5C8D7B] text-[#F6F6F6] font-medium px-4 py-2 rounded-full cursor-pointer border-none outline-none hover:bg-[#F6F6F6] hover:text-[#5C8D7B] transition-all duration-300 ease-in-out"
+                    className="bg-[#5C8D7B] text-[#F6F6F6] font-medium text-sm md:text-md px-4 py-2 rounded-full cursor-pointer border-none outline-none hover:bg-[#F6F6F6] hover:text-[#5C8D7B] transition-all duration-300 ease-in-out"
                     onClick={handleAddIncomeClick}>
                     Add Income
                 </button>
             </div>
             <div
-                className="flex-1 overflow-auto">
+                className="flex-1 overflow-auto scrollbar-none">
                 {/* Display income */}
                 {search === '' ? income.map(inc => (
                     <div
                         className="flex justify-between items-center gap-6 my-4"
                         key={inc._id}>
                         <div
-                            className="flex-1 flex justify-between cursor-pointer"
+                            className="flex-1 flex gap-4 justify-between cursor-pointer"
                             onClick={() => handleEditIncomeClick(inc)}>
-                            <p>{inc.title}</p> {/* Income title */}
-                            <p>{inc.category}</p> {/* Income category */}
-                            <p>{inc.amount}</p> {/* Income amount */}
+                            <p className="flex-[2_1_100%] truncate">{inc.title}</p> {/* Income title */}
+                            <p className="flex-[2_1_100%] truncate">{inc.category}</p> {/* Income category */}
+                            <p className="flex-[1_1_50%] truncate text-right">{inc.amount}</p> {/* Income amount */}
                         </div>
                     </div>
                 )) : (
@@ -217,9 +217,9 @@ const Income = ({ income, setIncome, search }) => {
                             <div
                                 className="flex-1 flex justify-between cursor-pointer"
                                 onClick={() => handleEditIncomeClick(inc)}>
-                                <p>{inc.title}</p> {/* Income title */}
-                                <p>{inc.category}</p> {/* Income category */}
-                                <p>{inc.amount}</p> {/* Income amount */}
+                                <p className="flex-[2_1_100%] truncate">{inc.title}</p> {/* Income title */}
+                                <p className="flex-[2_1_100%] truncate">{inc.category}</p> {/* Income category */}
+                                <p className="flex-[1_1_50%] truncate text-right">{inc.amount}</p> {/* Income amount */}
                             </div>
                         </div>
                     ))

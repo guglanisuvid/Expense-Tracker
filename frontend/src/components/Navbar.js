@@ -8,10 +8,6 @@ const Navbar = ({ username }) => {
 
     const navigate = useNavigate(); // useNavigate hook to navigate to different routes
 
-    const handleClick = () => {
-        setIsProfileOpen(!isProfileOpen);
-    }
-
     // Logout user
     const handleLogout = () => {
         const logoutData = logout();
@@ -20,29 +16,31 @@ const Navbar = ({ username }) => {
 
     return (
         <div
-            className='h-full flex flex-col justify-around p-6 bg-[#1C1C1C] rounded-2xl'>
+            className='lg:h-full md:relative flex flex-col sm:flex-row items-center flex-wrap md:flex-nowrap lg:flex-col gap-6 justify-between lg:justify-around p-4 lg:p-6 bg-[#1C1C1C] rounded-2xl'>
             {/* User profile */}
             <div
-                className='flex flex-col gap-2'>
+                className='lg:flex-none flex md:flex-row lg:flex-col items-center gap-2 order-1'>
                 <img
-                    className='w-16 h-16 rounded-full mx-auto bg-slate-300'
+                    className={`w-8 lg:w-12 h-8 lg:h-12 rounded-full mx-auto bg-slate-300`}
                     src=''
                     alt='' />
-                <p className='text-2xl font-semibold text-center'>@{username}</p>
+                <p className='text-xl font-semibold text-center'>@{username}</p>
             </div>
+
+            <p className='hidden sm:inline md:hidden text-sm cursor-pointer hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out order-2' onClick={() => window.location.reload()}>Refresh Page</p>
 
             {/* Dashboard and Profile buttons */}
             <div
-                className='flex flex-col gap-6 items-start'>
+                className='w-full md:w-auto lg:flex-none flex md:flex-row lg:flex-col justify-evenly gap-12 lg:gap-6 md:items-center lg:items-start order-4 md:order-3'>
                 <button
-                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300   ease-in-out ${isProfileOpen ? 'opacity-30' : 'opacity-100'}`}
-                    onClick={handleClick}
+                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isProfileOpen ? 'opacity-50' : 'opacity-100'}`}
+                    onClick={() => setIsProfileOpen(false)}
                 >
                     Dashboard
                 </button>
                 <button
-                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isProfileOpen ? 'opacity-100' : 'opacity-30'}`}
-                    onClick={handleClick}
+                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isProfileOpen ? 'opacity-100' : 'opacity-50'}`}
+                    onClick={() => setIsProfileOpen(true)}
                 >
                     Profile
                 </button>
@@ -50,7 +48,7 @@ const Navbar = ({ username }) => {
 
             {/* Logout button */}
             <button
-                className='w-full bg-[#F6F6F6] text-[#0F0F0F] font-medium px-4 py-2 rounded-full cursor-pointer border-none outline-none hover:text-[#F6F6F6] hover:bg-[#0F0F0F] transition-all duration-300 ease-in-out'
+                className='lg:flex-none lg:w-full bg-[#F6F6F6] text-[#0F0F0F] font-medium px-8 py-2 rounded-full cursor-pointer border-none outline-none hover:text-[#F6F6F6] hover:bg-[#0F0F0F] transition-all duration-300 ease-in-out order-3 md:order-4'
                 onClick={handleLogout}>
                 SIGN OUT
             </button>

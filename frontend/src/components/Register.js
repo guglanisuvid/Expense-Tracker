@@ -53,7 +53,7 @@ const Register = () => {
     }, [navigate]);
 
     return (
-        <div className="w-1/5 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+        <div className="w-3/4 sm:w-1/2 md:w-[40%] lg:w-1/3 xl:w-1/4 2xl:w-1/5 max-w-[400px] absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
             <p className="text-3xl font-semibold text-center my-4">SIGN UP</p> {/* Sign Up heading */}
 
             {/* Form to register new user */}

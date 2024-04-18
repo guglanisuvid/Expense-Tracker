@@ -187,29 +187,29 @@ const Expenses = ({ expenses, setExpenses, search }) => {
             <div
                 className="flex justify-between items-center">
                 <h1
-                    className="text-2xl font-semibold">
+                    className="text-xl font-semibold">
                     Expenses
                 </h1>
                 {/* Add expense button */}
                 <button
-                    className="bg-[#E35933] text-[#F6F6F6] font-medium px-4 py-2 rounded-full cursor-pointerr border-none outline-none hover:bg-[#F6F6F6] hover:text-[#E35933] transition-all duration-300 ease-in-out"
+                    className="bg-[#E35933] text-[#F6F6F6] font-medium text-sm md:text-md px-4 py-2 rounded-full cursor-pointerr border-none outline-none hover:bg-[#F6F6F6] hover:text-[#E35933] transition-all duration-300 ease-in-out"
                     onClick={handleAddExpenseClick}>
                     Add Expense
                 </button>
             </div>
             <div
-                className="flex-1 overflow-auto">
+                className="flex-1 overflow-auto scrollbar-none">
                 {/* Display expenses */}
                 {search === '' ? expenses.map(expense => (
                     <div
                         className="flex justify-between items-center gap-6 my-4"
                         key={expense._id}>
                         <div
-                            className="flex-1 flex justify-between cursor-pointer"
+                            className="flex-1 flex gap-4 justify-between cursor-pointer"
                             onClick={() => handleEditExpenseClick(expense)}>
-                            <p>{expense.title}</p> {/* Expense title */}
-                            <p>{expense.category}</p> {/* Expense category */}
-                            <p>{expense.amount}</p> {/* Expense amount */}
+                            <p className="flex-[2_1_100%] truncate">{expense.title}</p> {/* Expense title */}
+                            <p className="flex-[2_1_100%] truncate">{expense.category}</p> {/* Expense category */}
+                            <p className="flex-[1_1_50%] text-right">${expense.amount}</p> {/* Expense amount */}
                         </div>
                     </div>
                 )) : (
@@ -218,11 +218,11 @@ const Expenses = ({ expenses, setExpenses, search }) => {
                             className="flex justify-between items-center gap-6 my-4"
                             key={expense._id}>
                             <div
-                                className="flex-1 flex justify-between cursor-pointer"
+                                className="flex-1 flex gap-4 justify-between cursor-pointer"
                                 onClick={() => handleEditExpenseClick(expense)}>
-                                <p>{expense.title}</p> {/* Expense title */}
-                                <p>{expense.category}</p> {/* Expense category */}
-                                <p>{expense.amount}</p> {/* Expense amount */}
+                                <p className="flex-[2_1_100%] truncate">{expense.title}</p> {/* Expense title */}
+                                <p className="flex-[2_1_100%] truncate">{expense.category}</p> {/* Expense category */}
+                                <p className="flex-[1_1_50%] text-right">${expense.amount}</p> {/* Expense amount */}
                             </div>
                         </div>
                     ))
@@ -260,12 +260,12 @@ const Expenses = ({ expenses, setExpenses, search }) => {
                         className="absolute top-4 right-4 text-[#F6F6F6] p-1 cursor-pointer"
                         onClick={closeModal}>
                         <svg
+                            className="w-6 h-6"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
                             strokeWidth={2}
-                            stroke="currentColor"
-                            className="w-6 h-6">
+                            stroke="currentColor">
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
