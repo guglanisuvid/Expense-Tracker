@@ -227,7 +227,7 @@ const Income = ({ income, setIncome, search }) => {
 
                 {/* Modal to add/edit income */}
                 <Modal
-                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 p-16 rounded-xl bg-[#0F0F0F] outline-[#F6F6F6] border-2"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 px-4 py-12 sm:p-16 rounded-xl bg-[#0F0F0F] outline-[#F6F6F6] border-2"
                     overlayClassName="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm"
                     isOpen={modalIsOpen}
                     onRequestClose={closeModal}
@@ -254,7 +254,7 @@ const Income = ({ income, setIncome, search }) => {
 
                     {/* Close the modal */}
                     <button
-                        className="absolute top-4 right-4 text-[#F6F6F6] p-1 cursor-pointer"
+                        className="absolute top-1 sm:top-4 right-1 sm:right-4 text-[#F6F6F6] p-1 cursor-pointer"
                         onClick={closeModal}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

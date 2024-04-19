@@ -190,6 +190,7 @@ const Expenses = ({ expenses, setExpenses, search }) => {
                     className="text-xl font-semibold">
                     Expenses
                 </h1>
+
                 {/* Add expense button */}
                 <button
                     className="bg-[#E35933] text-[#F6F6F6] font-medium text-sm md:text-md px-4 py-2 rounded-full cursor-pointerr border-none outline-none hover:bg-[#F6F6F6] hover:text-[#E35933] transition-all duration-300 ease-in-out"
@@ -230,7 +231,7 @@ const Expenses = ({ expenses, setExpenses, search }) => {
 
                 {/* Modal to add/edit expense */}
                 <Modal
-                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 p-16 rounded-xl bg-[#0F0F0F] outline-[#F6F6F6] border-2"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 px-4 py-12 sm:p-16 rounded-xl bg-[#0F0F0F] outline-[#F6F6F6] border-2"
                     overlayClassName="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
                     isOpen={modalIsOpen}
                     onRequestClose={closeModal}
@@ -257,7 +258,7 @@ const Expenses = ({ expenses, setExpenses, search }) => {
 
                     {/* Close modal button */}
                     <button
-                        className="absolute top-4 right-4 text-[#F6F6F6] p-1 cursor-pointer"
+                        className="absolute top-1 sm:top-4 right-1 sm:right-4 text-[#F6F6F6] p-1 cursor-pointer"
                         onClick={closeModal}>
                         <svg
                             className="w-6 h-6"

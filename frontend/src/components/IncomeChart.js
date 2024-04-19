@@ -4,15 +4,15 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 
 const IncomeChart = ({ incomeData }) => {
     let data = incomeData.map(income => ({
-        category: income.category,
-        amount: income.amount
+        category: income?.category,
+        amount: income?.amount
     }));
 
     data = data.reduce((acc, cur) => {
-        if (acc[cur.category]) {
-            acc[cur.category] += cur.amount;
+        if (acc[cur?.category]) {
+            acc[cur?.category] += cur?.amount;
         } else {
-            acc[cur.category] = cur.amount;
+            acc[cur?.category] = cur?.amount;
         }
         return acc;
     }, {});
@@ -27,7 +27,7 @@ const IncomeChart = ({ incomeData }) => {
             return (
                 <div className="custom-tooltip flex flex-col gap-4 p-4 bg-[#0F0F0F] text-[#F6F6F6] rounded-xl">
                     <p className="label text-center font-medium text-[#5C8D7B]">{`${label}`}</p>
-                    <p className="label">{`Amount : ${payload[0].value}`}</p>
+                    <p className="label">{`Amount : ${payload[0]?.value}`}</p>
                 </div>
             );
         }

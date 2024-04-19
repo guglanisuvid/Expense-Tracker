@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import logout from '../utils/logout';
+import Profile from './Profile';
 
-const Navbar = ({ username }) => {
-
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
+const Navbar = ({ user }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const navigate = useNavigate(); // useNavigate hook to navigate to different routes
 
@@ -12,7 +12,15 @@ const Navbar = ({ username }) => {
     const handleLogout = () => {
         const logoutData = logout();
         logoutData.error ? alert(logoutData.message) : navigate('/login'); // If error, alert the message, else navigate to login
-    }
+    };
+
+    const handleProfileClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleDashboardClick = () => {
+        setIsModalOpen(false);
+    };
 
     return (
         <div
@@ -21,10 +29,10 @@ const Navbar = ({ username }) => {
             <div
                 className='lg:flex-none flex md:flex-row lg:flex-col items-center gap-2 order-1'>
                 <img
-                    className={`w-8 lg:w-12 h-8 lg:h-12 rounded-full mx-auto bg-slate-300`}
+                    className='w-8 lg:w-12 h-8 lg:h-12 rounded-full mx-auto bg-slate-300'
                     src=''
                     alt='' />
-                <p className='text-xl font-semibold text-center'>@{username}</p>
+                <p className='text-xl font-semibold text-center'>@{user?.username}</p>
             </div>
 
             <p className='hidden sm:inline md:hidden text-sm cursor-pointer hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out order-2' onClick={() => window.location.reload()}>Refresh Page</p>
@@ -33,14 +41,14 @@ const Navbar = ({ username }) => {
             <div
                 className='w-full md:w-auto lg:flex-none flex md:flex-row lg:flex-col justify-evenly gap-12 lg:gap-6 md:items-center lg:items-start order-4 md:order-3'>
                 <button
-                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isProfileOpen ? 'opacity-50' : 'opacity-100'}`}
-                    onClick={() => setIsProfileOpen(false)}
+                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isModalOpen ? 'opacity-50' : 'opacity-100'}`}
+                    onClick={handleDashboardClick}
                 >
                     Dashboard
                 </button>
                 <button
-                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isProfileOpen ? 'opacity-100' : 'opacity-50'}`}
-                    onClick={() => setIsProfileOpen(true)}
+                    className={`uppercase font-medium hover:underline underline-offset-[6px] transition-all duration-300 ease-in-out ${isModalOpen ? 'opacity-100' : 'opacity-50'}`}
+                    onClick={handleProfileClick}
                 >
                     Profile
                 </button>
@@ -52,8 +60,10 @@ const Navbar = ({ username }) => {
                 onClick={handleLogout}>
                 SIGN OUT
             </button>
-        </div>
-    )
+
+            {isModalOpen && <Profile user={user} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
+        </div >
+    );
 }
 
 export default Navbar

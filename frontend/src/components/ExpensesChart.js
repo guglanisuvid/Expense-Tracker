@@ -3,15 +3,15 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 
 const ExpensesChart = ({ expensesData }) => {
     let data = expensesData.map(expense => ({
-        category: expense.category,
-        amount: expense.amount
+        category: expense?.category,
+        amount: expense?.amount
     }));
 
     data = data.reduce((acc, cur) => {
-        if (acc[cur.category]) {
-            acc[cur.category] += cur.amount;
+        if (acc[cur?.category]) {
+            acc[cur?.category] += cur?.amount;
         } else {
-            acc[cur.category] = cur.amount;
+            acc[cur?.category] = cur?.amount;
         }
         return acc;
     }, {});
@@ -26,7 +26,7 @@ const ExpensesChart = ({ expensesData }) => {
             return (
                 <div className="custom-tooltip flex flex-col gap-4 p-4 bg-[#0F0F0F] text-[#F6F6F6] rounded-xl">
                     <p className="label text-center font-medium text-[#E35933]">{`${label}`}</p>
-                    <p className="label">{`Amount : ${payload[0].value}`}</p>
+                    <p className="label">{`Amount : ${payload[0]?.value}`}</p>
                 </div>
             );
         }

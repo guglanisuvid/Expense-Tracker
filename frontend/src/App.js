@@ -8,7 +8,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"; // Import the B
 function App() {
   return (
     <div
-      className="w-dvw max-w-[2000px] h-[200dvh] sm:h-[150dvh] md:h-dvh bg-[#0F0F0F] text-[#F6F6F6] tracking-wide p-6 mx-auto md:overflow-hidden scrollbar-none">
+      className="w-dvw max-w-[2000px] h-[100dvh] max-h-[200dvh] bg-[#0F0F0F] text-[#F6F6F6] tracking-wide p-6 mx-auto overflow-hidden scrollbar-none">
+      {/* className="w-dvw max-w-[2000px] h-[200dvh] sm:h-[150dvh] md:h-dvh bg-[#0F0F0F] text-[#F6F6F6] tracking-wide p-6 mx-auto md:overflow-hidden scrollbar-none"> */}
       {/* BrowserRouter component to wrap the routes */}
       <BrowserRouter>
         {/* Routes component to define the routes */}
