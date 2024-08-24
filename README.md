@@ -2,6 +2,9 @@
 
 Welcome to the Expense Tracker project! This application is designed to help users manage their personal finances by tracking income and expenses. Built using the MERN stack (MongoDB, Express.js, React, and Node.js), this application offers a user-friendly interface and robust backend to ensure a seamless experience.
 
+## Live Project
+https://expense-tracker-client-mu.vercel.app/
+
 ## Features:
 
 - **User Authentication:** Secure user registration and login using Passport.js and BCrypt for password hashing.
