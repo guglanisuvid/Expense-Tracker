@@ -19,7 +19,7 @@ app.use(express.json()); // Using json parser
 dotenv.config(); // Configuring dotenv
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URL).then(
+mongoose.connect(process.env.MONGODB_URI).then(
     () => console.log('MongoDB connected')
 ).catch(
     err => {
@@ -41,6 +41,8 @@ app.use(cors(corsOptions)); // Using cors with corsOptions
 
 app.options('*', cors(corsOptions)); // Handle preflight requests
 
+app.set('trust proxy', 1); // Trusting first proxy
+
 app.use(express.urlencoded({ extended: true })); // Using urlencoded parser for form data parsing in POST requests
 
 // Setting up and configuring sessions
@@ -49,14 +51,15 @@ app.use(session({
     saveUninitialized: false, // Save uninitialized session
     secret: process.env.SESSION_SECRET, // Secret key for session
     store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URL,
+        mongoUrl: process.env.MONGODB_URI,
         ttl: 7 * 24 * 60 * 60, // 7 days
+        touchAfter: 24 * 3600, // 24 hours
         autoRemove: 'native', // Automatically remove expired sessions
     }),
     cookie: {
-        secure: false, // Secure cookie
+        secure: true, // Secure cookie
         httpOnly: true, // httpOnly cookie
-        sameSite: 'strict', // SameSite cookie
+        sameSite: 'none', // SameSite cookie
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
 }));
@@ -361,7 +364,7 @@ app.get('/', (_, res) => {
     res.json({ message: "Welcome to Expense Tracker API" });
 });
 
-const PORT = process.env.PORT; // Setting up port for server
+const PORT = process.env.PORT || 5000; // Setting up port for server
 
 // Starting the server at port 5000
 app.listen(PORT, () => {
