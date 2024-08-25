@@ -31,3 +31,8 @@ To run the project in your local environment, follow these steps:
 3. Run `nodemon` inside the backend folder to get the server started.
 4. Run `npm run start` inside the frontend folder to run the project inside your browser.
 5. Start editing the project and add new features to the project.
+
+## Image
+
+![image](https://github.com/user-attachments/assets/83354c1f-ed2d-4f6d-ae5e-3b198cf2b8ae)
+
