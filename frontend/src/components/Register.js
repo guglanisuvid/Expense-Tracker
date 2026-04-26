@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"; // Import the useEffect and useState hooks from the react library
 import { Link, useNavigate } from "react-router-dom"; // Import the Link and useNavigate components from the react-router-dom library
-import { setToken, apiRequest } from "../utils/api"; // Import JWT utilities
+import { setToken, apiRequest, getToken } from "../utils/api"; // Import JWT utilities
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -40,6 +40,32 @@ const Register = () => {
             alert("Something went wrong");
         }
     };
+
+    // Check if user is already authenticated
+    useEffect(() => {
+        const checkExistingToken = async () => {
+            const existingToken = getToken();
+            if (existingToken) {
+                // Token exists, verify it with backend
+                try {
+                    const res = await apiRequest(`${process.env.REACT_APP_API_URL}/is-authenticated`, {
+                        method: 'GET'
+                    });
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (!data.error) {
+                            navigate('/dashboard'); // Token is valid, redirect to dashboard
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        };
+
+        checkExistingToken();
+    }, [navigate]);
 
     // Check if user is authenticated
     useEffect(() => {
