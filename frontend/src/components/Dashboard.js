@@ -26,9 +26,13 @@ const Dashboard = () => {
 
                 if (res.ok) {
                     const data = await res.json();
-                    setUser(data?.user);
-                    setExpenses(data?.user?.expenses);
-                    setIncome(data?.user?.income);
+                    if (data.error) {
+                        navigate('/login'); // If backend returns error, navigate to login page
+                    } else {
+                        setUser(data?.user);
+                        setExpenses(data?.user?.expenses);
+                        setIncome(data?.user?.income);
+                    }
                 } else {
                     navigate('/login'); // If user is not authenticated, navigate to login page
                 }

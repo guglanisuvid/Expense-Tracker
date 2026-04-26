@@ -36,7 +36,7 @@ const Navbar = ({ user }) => {
                 <img
                     className='w-8 lg:w-12 h-8 lg:h-12 rounded-full mx-auto bg-slate-300'
                     src=''
-                    alt='' />
+                    alt='User Profile' />
                 <p className='text-xl font-semibold text-center'>@{user?.username}</p>
             </div>
 

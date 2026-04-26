@@ -21,7 +21,7 @@ const Profile = ({ user, isModalOpen, setIsModalOpen }) => {
                 <img
                     className='w-12 sm:w-16 h-12 sm:h-16 rounded-full mx-auto bg-slate-300'
                     src=''
-                    alt=''
+                    alt='User Profile'
                 />
                 <p className='flex justify-between gap-1 sm:gap-2 md:gap-4 text-sm sm:text-md md:text-lg whitespace-nowrap'>
                     <span className=' flex-[2_2_100%] text-left font-medium'>Username</span>
