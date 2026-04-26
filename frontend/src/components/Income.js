@@ -1,5 +1,6 @@
 import React, { useState } from "react"; // Import the useEffect and useState hooks from the react library
 import Modal from "react-modal"; // Import the Modal component from the react-modal library
+import { apiRequest } from "../utils/api"; // Import JWT utilities
 
 Modal.setAppElement('#root'); // Set the app element for the Modal component
 
@@ -16,18 +17,14 @@ const Income = ({ income, setIncome, search }) => {
         e.preventDefault(); // Prevent default form submission
 
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/add-income`,
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/add-income`,
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         title,
                         amount,
                         category
-                    }),
-                    credentials: 'include'
+                    })
                 }
             );
 
@@ -45,18 +42,14 @@ const Income = ({ income, setIncome, search }) => {
     // Edit income
     const editIncome = async (i) => {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/edit-income/${i._id}`,
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/edit-income/${i._id}`,
                 {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         title,
                         amount,
                         category
-                    }),
-                    credentials: 'include'
+                    })
                 }
             );
 
@@ -74,10 +67,9 @@ const Income = ({ income, setIncome, search }) => {
     // Delete income
     const deleteIncome = async (i) => {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/delete-income/${i._id}`,
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/delete-income/${i._id}`,
                 {
-                    method: 'DELETE',
-                    credentials: 'include'
+                    method: 'DELETE'
                 });
 
             if (res.ok) {

@@ -18,6 +18,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "joi": "^17.12.3",
+    "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.4",
     "passport": "^0.7.0",

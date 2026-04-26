@@ -1,5 +1,6 @@
 import React, { useState } from "react"; // Import the useEffect and useState hooks from the react library
 import Modal from "react-modal"; // Import the Modal component from the react-modal library
+import { apiRequest } from "../utils/api"; // Import JWT utilities
 
 Modal.setAppElement('#root'); // Set the app element for the Modal component
 
@@ -16,18 +17,14 @@ const Expenses = ({ expenses, setExpenses, search }) => {
         e.preventDefault(); // Prevent default form submission
 
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/add-expense`,
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/add-expense`,
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         title,
                         amount,
                         category
-                    }),
-                    credentials: 'include'
+                    })
                 }
             );
 
@@ -45,18 +42,14 @@ const Expenses = ({ expenses, setExpenses, search }) => {
     // Edit expense
     const editExpense = async (e) => {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/edit-expense/${e._id}`,
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/edit-expense/${e._id}`,
                 {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         title,
                         amount,
                         category
-                    }),
-                    credentials: 'include'
+                    })
                 }
             );
 
@@ -73,12 +66,10 @@ const Expenses = ({ expenses, setExpenses, search }) => {
 
     // Delete expense
     const deleteExpense = async (e) => {
-
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/delete-expense/${e._id}`,
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/delete-expense/${e._id}`,
                 {
-                    method: 'DELETE',
-                    credentials: 'include'
+                    method: 'DELETE'
                 });
 
             if (res.ok) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"; // Import the useEffect and useState hooks from the react library
 import { Link, useNavigate } from "react-router-dom"; // Import the Link and useNavigate components from the react-router-dom library
+import { setToken, apiRequest } from "../utils/api"; // Import JWT utilities
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -12,21 +13,23 @@ const Login = () => {
 
         // Fetch API to login user
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+            const res = await apiRequest(`${process.env.REACT_APP_API_URL}/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify({
                     username,
                     password
-                }),
-                credentials: 'include'
+                })
             });
 
             if (res.ok) {
                 const data = await res.json();
-                data.error ? alert(data?.message) : navigate('/dashboard'); // If error, alert the message, else navigate to dashboard
+                if (data.error) {
+                    alert(data?.message);
+                } else {
+                    // Store token in localStorage
+                    setToken(data.token);
+                    navigate('/dashboard');
+                }
             } else {
                 alert("Something went wrong");
             }
@@ -39,17 +42,19 @@ const Login = () => {
     useEffect(() => {
         const isAuthenticated = async () => {
             try {
-                const res = await fetch(`${process.env.REACT_APP_API_URL}/is-authenticated`,
-                    {
-                        method: 'GET',
-                        credentials: 'include'
-                    });
+                const res = await apiRequest(`${process.env.REACT_APP_API_URL}/is-authenticated`, {
+                    method: 'GET'
+                });
+                
                 if (res.ok) {
                     const data = await res.json();
                     data?.user ? navigate('/dashboard') : navigate('/login');
+                } else {
+                    navigate('/login');
                 }
             } catch (err) {
                 console.error(err);
+                navigate('/login');
             }
         };
 

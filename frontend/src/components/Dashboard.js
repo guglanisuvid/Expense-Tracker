@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"; // Import the useEffect and useState hooks from the react library
 import { useNavigate } from "react-router-dom"; // Import the Link and useNavigate components from the react-router-dom library
+import { apiRequest } from "../utils/api"; // Import JWT utilities
 import Navbar from "./Navbar";
 import Header from "./Header";
 import Expenses from "./Expenses";
@@ -19,21 +20,21 @@ const Dashboard = () => {
     useEffect(() => {
         const isAuthenticated = async () => {
             try {
-                const res = await fetch(`${process.env.REACT_APP_API_URL}/is-authenticated`,
-                    {
-                        method: 'GET',
-                        credentials: 'include'
-                    });
+                const res = await apiRequest(`${process.env.REACT_APP_API_URL}/is-authenticated`, {
+                    method: 'GET'
+                });
 
                 if (res.ok) {
                     const data = await res.json();
                     setUser(data?.user);
                     setExpenses(data?.user?.expenses);
                     setIncome(data?.user?.income);
-                    data.user ? navigate('/dashboard') : navigate('/login'); // If user is authenticated, navigate to dashboard page, else navigate to login page
+                } else {
+                    navigate('/login'); // If user is not authenticated, navigate to login page
                 }
             } catch (err) {
                 console.error(err);
+                navigate('/login');
             }
         };
 

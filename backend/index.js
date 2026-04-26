@@ -1,8 +1,6 @@
 const express = require('express'); // Importing express
-const session = require('express-session'); // Importing express-session
 const cors = require('cors'); // Importing cors
-const passport = require('passport'); // Importing passport
-const localStrategy = require('passport-local'); // Importing passport local strategy
+const jwt = require('jsonwebtoken'); // Importing jsonwebtoken
 const User = require('./user'); // Importing User model
 const Expense = require('./expense'); // Importing Expense model
 const Income = require('./income'); // Importing Income model
@@ -10,7 +8,6 @@ const joi = require('joi'); // Importing joi for validation
 const dotenv = require('dotenv'); // Importing dotenv for environment variables
 const bcrypt = require('bcryptjs'); // Importing bcrypt for password hashing
 const mongoose = require('mongoose'); // Importing mongoose
-const MongoStore = require('connect-mongo'); // Importing connect-mongo for session store
 const user = require('./user');
 
 const app = express(); // Creating express app instance
@@ -45,27 +42,31 @@ app.set('trust proxy', 1); // Trusting first proxy
 
 app.use(express.urlencoded({ extended: true })); // Using urlencoded parser for form data parsing in POST requests
 
-// Setting up and configuring sessions
-app.use(session({
-    resave: false, // Resave session
-    saveUninitialized: false, // Save uninitialized session
-    secret: process.env.SESSION_SECRET, // Secret key for session
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
-        ttl: 7 * 24 * 60 * 60, // 7 days
-        touchAfter: 24 * 3600, // 24 hours
-        autoRemove: 'native', // Automatically remove expired sessions
-    }),
-    cookie: {
-        secure: true, // Secure cookie
-        httpOnly: true, // httpOnly cookie
-        sameSite: 'none', // SameSite cookie
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    },
-}));
+// JWT Middleware for token verification
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
+    
+    if (!token) {
+        return res.json({ error: true, message: 'No token provided' });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.json({ error: true, message: 'Invalid token' });
+    }
+};
 
-app.use(passport.initialize()); // Using passport initialize
-app.use(passport.session()); // Using passport session
+// Generate JWT Token
+const generateToken = (user) => {
+    return jwt.sign(
+        { id: user._id, username: user.username, email: user.email },
+        process.env.JWT_SECRET || 'fallback-secret',
+        { expiresIn: '7d' }
+    );
+};
 
 // Generating Password Hash
 const generatePasswordHash = (text) => {
@@ -84,55 +85,6 @@ const userRegisterationValidationSchema = joi.object({
     email: joi.string().email().required().min(5), // Email validation with minimum 5 characters
     password: joi.string().required().min(3).max(100), // Password validation with minimum 3 and maximum 100 characters
     username: joi.string().required(), // Username validation with minimum 1 character
-});
-
-// Setting up passport local strategy
-passport.use(new localStrategy(
-    // Setting up username and password fields
-    {
-        usernameField: 'username',
-        passwordField: 'password',
-    },
-    // Authenticating user with username and password
-    async (username, password, done) => {
-        try {
-            const user = await User.findOne({ username: username }); // Finding user by username
-
-            if (!user) return done(null, false, { message: 'Incorrect username.' }); // If user not found
-
-            if (!user.password) return done(null, false, { message: 'User password is undefined.' }); // If user password is undefined
-
-            const isValid = matchHashedPassword(password, user.password); // Matching password hash with user password
-
-            if (isValid) return done(null, user);// If password is correct
-            else return done(null, false, { message: 'Incorrect password.' }); // If password is incorrect
-        } catch (err) {
-            console.error(err);
-            return done(err);
-        }
-    }));
-
-// Serializing user
-passport.serializeUser((user, done) => {
-    try {
-        done(null, user.id); // Serializing user
-    } catch (err) {
-        console.error(err);
-        done(err, false); // If error occurs while serializing user
-    }
-});
-
-// Deserializing user
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await User.findById(id); // Finding user by id
-        if (user) {
-            return done(null, user); // If user is found
-        } else return done(null, false); // If user is not found
-    } catch (err) {
-        console.error(err);
-        done(err, false); // If user is not found
-    }
 });
 
 // Register new user
@@ -170,30 +122,43 @@ app.post('/register', async (req, res) => {
 
         try {
             await newUser.save(); // Saving new user
+            const token = generateToken(newUser);
+            return res.json({ error: false, message: "Sign up success", token }); // If user is signed up successfully
         } catch (err) {
             return res.json({ error: true, message: err }); // If error occurs while saving user
         }
-
-        req.logIn(newUser, (err) => {
-            if (err) {
-                return res.json({ error: true, message: err }); // If error occurs while logging in user
-            } else {
-                return res.json({ error: false, message: "Sign up success" }); // If user is signed up successfully
-            }
-        });
     } else {
         return res.json({ error: true, message: "User already exists" }); // If user already exists
     }
 });
 
 // Login user
-app.post("/login", passport.authenticate("local"), (req, res) => {
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    
     try {
-        // If user is authenticated
-        res.json({
-            error: false,
-            message: "Login success",
-        });
+        const user = await User.findOne({ username }); // Finding user by username
+
+        if (!user) {
+            return res.json({ error: true, message: 'Incorrect username.' });
+        }
+
+        if (!user.password) {
+            return res.json({ error: true, message: 'User password is undefined.' });
+        }
+
+        const isValid = matchHashedPassword(password, user.password); // Matching password hash with user password
+
+        if (isValid) {
+            const token = generateToken(user);
+            return res.json({
+                error: false,
+                message: "Login success",
+                token
+            });
+        } else {
+            return res.json({ error: true, message: 'Incorrect password.' });
+        }
     } catch (err) {
         console.error(err);
         res.json({ error: true, message: err || "Something went wrong" });
@@ -202,43 +167,34 @@ app.post("/login", passport.authenticate("local"), (req, res) => {
 
 // Sign out user
 app.get('/logout', (req, res) => {
-    req.logOut(err => {
-        if (err) {
-            return res.json({ error: true, message: err || "Something went wrong" })
-        } // If error occurs while logging out user
-        else {
-            return res.json({ error: false, message: "User logged out successfully" })
-        }; // If user is logged out successfully
-    });
+    return res.json({ error: false, message: "User logged out successfully" });
 });
 
 // Check current user authentication status
-app.get('/is-authenticated', async (req, res) => {
+app.get('/is-authenticated', verifyToken, async (req, res) => {
     try {
-        if (req.isAuthenticated()) {
-            // Finding user by username and populating expenses and income
-            const user = await User.findOne(
-                {
-                    username: req.user.username
+        // Finding user by username and populating expenses and income
+        const user = await User.findOne(
+            {
+                username: req.user.username
+            }
+        ).populate(
+            {
+                path: 'expenses',
+                options: {
+                    sort: { date: -1 }
                 }
-            ).populate(
-                {
-                    path: 'expenses',
-                    options: {
-                        sort: { date: -1 }
-                    }
+            }
+        ).populate(
+            {
+                path: 'income',
+                options: {
+                    sort: { date: -1 }
                 }
-            ).populate(
-                {
-                    path: 'income',
-                    options: {
-                        sort: { date: -1 }
-                    }
-                }
-            );
+            }
+        );
 
-            return res.json({ error: false, message: "User is Signed In", user: user }); // If user is authenticated
-        } else return res.json({ error: true, message: "Unauthorized access", });
+        return res.json({ error: false, message: "User is Signed In", user: user }); // If user is authenticated
     } catch (err) {
         console.error(err);
         return res.json({ error: true, message: err });
@@ -246,7 +202,7 @@ app.get('/is-authenticated', async (req, res) => {
 });
 
 // Add new expense
-app.post('/add-expense', async (req, res) => {
+app.post('/add-expense', verifyToken, async (req, res) => {
     const { title, amount, category } = req.body; // Getting title, amount, and category from request body
 
     const user = await User.findOne({ username: req.user.username }); // Finding user by username
@@ -274,7 +230,7 @@ app.post('/add-expense', async (req, res) => {
 });
 
 // Edit expense
-app.put('/edit-expense/:id', async (req, res) => {
+app.put('/edit-expense/:id', verifyToken, async (req, res) => {
     const { title, amount, category } = req.body; // Getting title, amount, and category from request body
 
     try {
@@ -286,8 +242,7 @@ app.put('/edit-expense/:id', async (req, res) => {
 });
 
 // Delete expense
-app.delete('/delete-expense/:id', async (req, res) => {
-
+app.delete('/delete-expense/:id', verifyToken, async (req, res) => {
     try {
         await Expense.findByIdAndDelete(req.params.id); // Deleting expense by id
 
@@ -304,7 +259,7 @@ app.delete('/delete-expense/:id', async (req, res) => {
 });
 
 // Add new income
-app.post('/add-income', async (req, res) => {
+app.post('/add-income', verifyToken, async (req, res) => {
     const { title, amount, category } = req.body; // Getting title, amount, and category from request body
 
     const user = await User.findOne({ username: req.user.username }); // Finding user by username
@@ -322,7 +277,7 @@ app.post('/add-income', async (req, res) => {
         user.income.push(newIncome._id); // Pushing new income to user income array
         try {
             await user.save(); // Saving user
-            res.json({ error: false, message: "Expense added successfully", income: newIncome }); // If income is added successfully
+            res.json({ error: false, message: "Income added successfully", income: newIncome }); // If income is added successfully
         } catch (err) {
             res.json({ error: true, message: err }); // If error occurs while saving user
         }
@@ -332,7 +287,7 @@ app.post('/add-income', async (req, res) => {
 });
 
 // Edit income
-app.put('/edit-income/:id', async (req, res) => {
+app.put('/edit-income/:id', verifyToken, async (req, res) => {
     const { title, amount, category } = req.body; // Getting title, amount, and category from request body
 
     try {
@@ -344,7 +299,7 @@ app.put('/edit-income/:id', async (req, res) => {
 });
 
 // Delete income
-app.delete('/delete-income/:id', async (req, res) => {
+app.delete('/delete-income/:id', verifyToken, async (req, res) => {
     try {
         await Income.findByIdAndDelete(req.params.id); // Deleting income by id
 

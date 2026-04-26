@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import logout from '../utils/logout';
+import { removeToken } from '../utils/api';
 import Profile from './Profile';
 
 const Navbar = ({ user }) => {
@@ -9,8 +10,12 @@ const Navbar = ({ user }) => {
     const navigate = useNavigate(); // useNavigate hook to navigate to different routes
 
     // Logout user
-    const handleLogout = () => {
-        const logoutData = logout();
+    const handleLogout = async () => {
+        // Remove token from localStorage
+        removeToken();
+        
+        // Call logout endpoint
+        const logoutData = await logout();
         logoutData.error ? alert(logoutData.message) : navigate('/login'); // If error, alert the message, else navigate to login
     };
 
